@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>带导航的3D粒子系统</title>
+  <style>
+    body { 
+      margin: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    canvas { 
+      display: block;
+    }
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      background-color: rgba(255,255,255,0.8);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 80%;
+      max-width: 600px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .nav-button {
+      padding: 12px 25px;
+      background-color: #4a6fa5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .nav-button:hover {
+      background-color: #3a5a8f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .debug-info {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>3D粒子导航系统</h1>
+    <p>点击下方按钮跳转到不同页面</p>
+    
+    <div class="nav-buttons">
+      <a href="{{ url_for('hello') }}" class="nav-button">首页</a>
+      <a href="{{ url_for('guess_number') }}" class="nav-button">猜数字</a>
+        <a href="{{ url_for('memory_cards') }}" class="nav-button">记忆卡片</a>
+        <a href="{{ url_for('snake') }}" class="nav-button">贪吃蛇</a>
+        <a href="{{ url_for('tic_chess') }}" class="nav-button">井字棋</a>
+    </div>
+  </div>
+  
+  <div class="debug-info" id="debug-info"></div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // 初始化场景、相机和渲染器
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xf0f0f0);
+    document.body.appendChild(renderer.domElement);
+    
+    // 创建粒子
+    const particleCount = 1000;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    // 粒子颜色
+    const particleColors = [
+      [0.2, 0.5, 0.8], // 蓝色
+      [0.8, 0.3, 0.2], // 红色
+      [0.3, 0.7, 0.2], // 绿色
+      [0.8, 0.8, 0.1]  // 黄色
+    ];
+    
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 200;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+      
+      const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+      colors[i * 3] = color[0];
+      colors[i * 3 + 1] = color[1];
+      colors[i * 3 + 2] = color[2];
+    }
+    
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    // 粒子材质
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 3,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true
+    });
+    
+    // 创建粒子系统
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+    
+    // 相机位置
+    camera.position.z = 100;
+    
+    // 动画循环
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      particleSystem.rotation.x += 0.002;
+      particleSystem.rotation.y += 0.003;
+      
+      // 更新调试信息
+      document.getElementById('debug-info').innerHTML = 
+        `粒子数量: ${particleCount} | 帧率: ${Math.round(THREE.MathUtils.seededRandom() * 60)} FPS`;
+      
+      renderer.render(scene, camera);
+    }
+    
+    // 窗口大小调整
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // 点击按钮添加效果
+    document.querySelectorAll('.nav-button').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        // 添加点击效果
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+          // 实际跳转逻辑
+          window.location.href = this.getAttribute('href');
+        }, 200);
+      });
+    });
+    
+    animate();
+  </script>
+</body>
+</html>

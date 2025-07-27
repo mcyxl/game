@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>井字棋</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #333;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+        }
+        .cell.x {
+            color: #e74c3c;
+        }
+        .cell.o {
+            color: #3498db;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #restart {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #restart:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>井字棋</h1>
+    <div id="game-board"></div>
+    <div id="status">玩家 X 的回合</div>
+    <button id="restart">重新开始</button>
+
+    <script>
+        const gameBoard = document.getElementById('game-board');
+        const statusDisplay = document.getElementById('status');
+        const restartButton = document.getElementById('restart');
+        
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // 行
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // 列
+            [0, 4, 8], [2, 4, 6]             // 对角线
+        ];
+        
+        // 初始化游戏板
+        function initializeGame() {
+            gameBoard.innerHTML = '';
+            gameState = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            statusDisplay.textContent = `玩家 ${currentPlayer} 的回合`;
+            
+            gameState.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                cellElement.setAttribute('data-index', index);
+                cellElement.addEventListener('click', handleCellClick);
+                gameBoard.appendChild(cellElement);
+            });
+        }
+        
+        // 处理格子点击
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+            
+            if (gameState[clickedCellIndex] !== '' || !gameActive) {
+                return;
+            }
+            
+            handleCellPlayed(clickedCell, clickedCellIndex);
+            handleResultValidation();
+        }
+        
+        // 更新游戏状态
+        function handleCellPlayed(clickedCell, clickedCellIndex) {
+            gameState[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.classList.add(currentPlayer.toLowerCase());
+        }
+        
+        // 检查游戏结果
+        function handleResultValidation() {
+            let roundWon = false;
+            
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                
+                if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') {
+                    continue;
+                }
+                
+                if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+                    roundWon = true;
+                    break;
+                }
+            }
+            
+            if (roundWon) {
+                statusDisplay.textContent = `玩家 ${currentPlayer} 获胜!`;
+                gameActive = false;
+                return;
+            }
+            
+            const roundDraw = !gameState.includes('');
+            if (roundDraw) {
+                statusDisplay.textContent = "平局!";
+                gameActive = false;
+                return;
+            }
+            
+            changePlayer();
+        }
+        
+        // 切换玩家
+        function changePlayer() {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            statusDisplay.textContent = `玩家 ${currentPlayer} 的回合`;
+        }
+        
+        // 重新开始游戏
+        restartButton.addEventListener('click', initializeGame);
+        
+        // 初始化游戏
+        initializeGame();
+    </script>
+</body>
+</html>

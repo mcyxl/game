@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>联系我们</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        .nav-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>联系我们</h1>
+    <p>如果您有任何问题或建议，请通过以下方式联系我们：</p>
+    <ul>
+        <li>不要联系我们，我们不会回复。</li>
+        <li>如果您有任何问题，请尝试自己解决。</li>
+        <li>如果您有任何建议，请将其写在纸上，然后烧掉。</li>
+        <li>如果您真的需要帮助，请尝试在互联网上搜索。</li>
+        <li>如果您仍然需要帮助，请联系您的心理医生。</li>
+        <li>如果您有任何投诉，请将其发送到垃圾桶。</li>
+    </ul>
+    <input type="text" placeholder="您的姓名" style="width: 100%; padding: 10px; margin-top: 10px;">
+    <input type="email" placeholder="您的电子邮件" style="width: 100%; padding: 10px; margin-top: 10px;">
+    <textarea placeholder="您的消息" style="width: 100%; padding: 10px; margin-top: 10px; height: 100px;"></textarea>
+    <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">发送消息</button>
+    <a href="{{ url_for('index') }}" class="nav-button">返回首页</a>
+</body>
+</html>

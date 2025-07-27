@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .btn-container {
+            margin: 50px auto;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            background-color: #4285F4;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            min-width: 150px;
+        }
+        
+        .btn:hover {
+            background-color: #3367D6;
+        }
+        
+        .btn-red {
+            background-color: #DB4437;
+        }
+        
+        .btn-red:hover {
+            background-color: #C53929;
+        }
+        
+        .btn-green {
+            background-color: #0F9D58;
+        }
+        
+        .btn-green:hover {
+            background-color: #0B8043;
+        }
+        
+        .footer {
+            background-color: #f1f3f4; /* 与链接相近的浅色 */
+            padding: 20px;
+            text-align: right;
+            position: relative;
+        }
+        
+        .footer-links {
+            display: inline-block;
+        }
+        
+        .footer-link {
+            color: #5f6368; /* 较深的灰色 */
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 5px 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        .footer-link:hover {
+            color: #1a73e8; /* 鼠标悬停高亮颜色 */
+        }
+        
+        .footer-link:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1a73e8; /* 下划线高亮 */
+        }
+    </style>
+</head>
+<body>
+    <div class="btn-container">
+        <h2>Hello!</h2>
+        
+        <a href="{{ url_for('hello') }}" class="btn">首页</a>
+        <a href="{{ url_for('products') }}" class="btn btn-green">游戏列表</a>
+    </div>
+    
+    <div class="footer">
+        <div class="footer-links">
+            <a href="{{ url_for('about') }}" class="footer-link">关于我们</a>
+            <a href="{{ url_for('contact') }}" class="footer-link">联系我们</a>
+        </div>
+    </div>
+</body>
+</html>

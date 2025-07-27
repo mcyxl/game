@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>欢迎来到最搞笑的网站！</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffeb3b;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #ff5722;
+            font-size: 3em;
+            text-shadow: 3px 3px 0 #ff9800;
+            animation: bounce 2s infinite;
+        }
+        
+        .emoji {
+            font-size: 5em;
+            display: inline-block;
+            animation: spin 5s linear infinite;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 20px;
+            background-color: #e91e63;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #c2185b;
+            transform: translateY(0);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 0 #c2185b;
+        }
+        
+        .btn:active {
+            transform: translateY(10px);
+            box-shadow: 0 0 0 #c2185b;
+        }
+        
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+        }
+        
+        .btn:hover::after {
+            animation: shine 1.5s;
+        }
+        
+        .floating {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .banana {
+            top: 20%;
+            left: 10%;
+            font-size: 3em;
+            animation-delay: 0.5s;
+        }
+        
+        .poop {
+            top: 70%;
+            right: 15%;
+            font-size: 4em;
+            animation-delay: 1s;
+        }
+        
+        .dizzy {
+            bottom: 10%;
+            left: 20%;
+            font-size: 3.5em;
+            animation-delay: 1.5s;
+        }
+        
+        .joke-box {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 600px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            border: 3px dashed #ff5722;
+        }
+        
+        .joke-box::before {
+            content: "😂";
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            font-size: 2em;
+        }
+        
+        .joke-box::after {
+            content: "🤣";
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 2em;
+        }
+        
+        .joke-text {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating banana">🍌</div>
+    <div class="floating poop">💩</div>
+    <div class="floating dizzy">😵</div>
+    
+    <div class="container">
+        <h1>欢迎来到<br>世界上最搞笑的网站！</h1>
+        
+        <div class="emoji">🤪</div>
+        
+        <div class="joke-box">
+            <p class="joke-text">{{ joke }}</p>
+        </div>
+        
+        <a href="{{ url_for('index') }}" class="btn">
+            点我刷新笑话 (假装是返回首页)
+        </a>
+        
+        <p style="margin-top: 50px; color: #607d8b;">
+            警告：本网站可能会引发不受控制的大笑 😂
+        </p>
+    </div>
+</body>
+</html>

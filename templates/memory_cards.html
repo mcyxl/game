@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>记忆卡片游戏</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            margin: 20px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .card.flipped {
+            background-color: white;
+            color: #2c3e50;
+            transform: rotateY(180deg);
+        }
+        .card.matched {
+            background-color: #2ecc71;
+            cursor: default;
+        }
+        #stats {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>记忆卡片游戏</h1>
+    <div id="game-board"></div>
+    <div id="stats">
+        尝试次数: <span id="moves">0</span> | 
+        匹配对数: <span id="matches">0</span>/8
+    </div>
+
+    <script>
+        const symbols = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+        const cards = [...symbols, ...symbols];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        
+        // 洗牌函数
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // 初始化游戏
+        function initGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            updateStats();
+            
+            const shuffledCards = shuffle(cards);
+            
+            shuffledCards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+                card.addEventListener('click', flipCard);
+                gameBoard.appendChild(card);
+            });
+        }
+        
+        // 翻转卡片
+        function flipCard() {
+            if (flippedCards.length >= 2 || this.classList.contains('flipped') || this.classList.contains('matched')) {
+                return;
+            }
+            
+            this.classList.add('flipped');
+            this.textContent = this.dataset.symbol;
+            flippedCards.push(this);
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                updateStats();
+                checkForMatch();
+            }
+        }
+        
+        // 检查是否匹配
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                updateStats();
+                flippedCards = [];
+                
+                if (matchedPairs === symbols.length) {
+                    setTimeout(() => alert(`恭喜! 你在${moves}次尝试后完成了游戏!`), 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.textContent = '';
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('matches').textContent = matchedPairs;
+        }
+        
+        // 初始化游戏
+        initGame();
+    </script>
+</body>
+</html>

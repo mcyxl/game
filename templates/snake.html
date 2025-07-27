@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>贪吃蛇游戏</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #game-container {
+            position: relative;
+        }
+        #game-board {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        #score-display {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        #restart-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #restart-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>贪吃蛇游戏</h1>
+    <div id="game-container">
+        <canvas id="game-board" width="400" height="400"></canvas>
+        <div id="game-over">
+            <h2>游戏结束!</h2>
+            <p>你的得分: <span id="final-score">0</span></p>
+            <button id="restart-btn">重新开始</button>
+        </div>
+    </div>
+    <div id="score-display">得分: 0</div>
+
+    <script>
+        const canvas = document.getElementById('game-board');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score-display');
+        const gameOverDisplay = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+        
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 5, y: 5};
+        let xVelocity = 0;
+        let yVelocity = 0;
+        let score = 0;
+        let gameRunning = true;
+        
+        // 游戏主循环
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // 清空画布
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 移动蛇
+            const head = {x: snake[0].x + xVelocity, y: snake[0].y + yVelocity};
+            snake.unshift(head);
+            
+            // 检查是否吃到食物
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                scoreDisplay.textContent = `得分: ${score}`;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+            
+            // 检查碰撞
+            if (
+                head.x < 0 || head.x >= tileCount || 
+                head.y < 0 || head.y >= tileCount ||
+                snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+            ) {
+                gameOver();
+                return;
+            }
+            
+            // 绘制食物
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            
+            // 绘制蛇
+            ctx.fillStyle = 'green';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+            });
+            
+            // 继续游戏循环
+            setTimeout(gameLoop, 100);
+        }
+        
+        // 生成食物
+        function generateFood() {
+            let newFood;
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
+                };
+            } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+            
+            food = newFood;
+        }
+        
+        // 游戏结束
+        function gameOver() {
+            gameRunning = false;
+            finalScoreDisplay.textContent = score;
+            gameOverDisplay.style.display = 'block';
+        }
+        
+        // 重新开始游戏
+        function restartGame() {
+            snake = [{x: 10, y: 10}];
+            xVelocity = 0;
+            yVelocity = 0;
+            score = 0;
+            scoreDisplay.textContent = `得分: ${score}`;
+            generateFood();
+            gameOverDisplay.style.display = 'none';
+            gameRunning = true;
+            gameLoop();
+        }
+        
+        // 键盘控制
+        document.addEventListener('keydown', e => {
+            if (!gameRunning) return;
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (yVelocity !== 1) {
+                        xVelocity = 0;
+                        yVelocity = -1;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (yVelocity !== -1) {
+                        xVelocity = 0;
+                        yVelocity = 1;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (xVelocity !== 1) {
+                        xVelocity = -1;
+                        yVelocity = 0;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (xVelocity !== -1) {
+                        xVelocity = 1;
+                        yVelocity = 0;
+                    }
+                    break;
+            }
+        });
+        
+        restartBtn.addEventListener('click', restartGame);
+        
+        // 开始游戏
+        generateFood();
+        gameLoop();
+    </script>
+</body>
+</html>
